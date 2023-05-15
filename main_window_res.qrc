@@ -1,0 +1,22 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>res/add_box_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/currency_ruble_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/database_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/delete_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/edit_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/menu_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/open_in_new_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/shopping_basket_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/shopping_cart_checkout_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/shopping_cart_checkout_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/add_box_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/currency_ruble_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/delete_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/edit_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/menu_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/open_in_new_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/shopping_basket_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>res/shopping_cart_checkout_FILL0_wght400_GRAD0_opsz48.svg</file>
+  </qresource>
+</RCC>
