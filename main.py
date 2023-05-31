@@ -3,15 +3,45 @@ from new_balance_UI import *
 from new_category_UI import *
 from new_income_UI import *
 from new_expense_UI import *
+from auth_UI import *
 import datetime
 import psycopg2
 import sys
+import os
+import dotenv
+import matplotlib
+
+env_exist = os.path.exists(".env")
+if not env_exist:
+    with open ('.env', 'w+') as f:
+        f.write("MYMONEY_PASSWORD = ")
+else:
+    print('Файл env существует')
+
+dotenv.load_dotenv('.env')
+
+def auth_window():
+    global Dialog_auth, ui_auth
+    Dialog_auth = QtWidgets.QWidget()
+    ui_auth = Ui_auth()
+    ui_auth.setupUi(Dialog_auth)
+    Dialog_auth.show()
+    ui_auth.pushButton.clicked.connect(auth)
+
+def auth():
+    global MainWindow, ui
+    program_password = os.environ.get('MYMONEY_PASSWORD')
+    if ui_auth.lineEdit.text() == program_password:
+        MainWindow.show()
+        Dialog_auth.close()
+    else:
+        print('пароль неправильный')
 
 app = QtWidgets.QApplication(sys.argv)
 MainWindow = QtWidgets.QMainWindow()
 ui = Ui_MainWindow()
 ui.setupUi(MainWindow)
-MainWindow.show()
+auth_window()
 
 def DB_connect(DB_name,DB_user,DB_password,DB_host,DB_port):
     global DB
@@ -26,10 +56,8 @@ def DB_connect(DB_name,DB_user,DB_password,DB_host,DB_port):
         print('Успешное подключение к БД')
     except:
         print('Ошибка подключения к БД')
-    return
 
 DB_connect("MyMoneyDB","postgres","postgres","localhost","5432")
-
 
 def get_all_balance():
     select_amount_all_balances = 'SELECT "Balance_amount" FROM "Balance";'
