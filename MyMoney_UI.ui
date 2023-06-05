@@ -319,30 +319,10 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_5">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>230</y>
-        <width>31</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="main_window_res.qrc">
-        <normaloff>:/newPrefix/res/edit_FILL0_wght400_GRAD0_opsz48.svg</normaloff>:/newPrefix/res/edit_FILL0_wght400_GRAD0_opsz48.svg</iconset>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushButton_6">
       <property name="geometry">
        <rect>
-        <x>230</x>
+        <x>190</x>
         <y>230</y>
         <width>31</width>
         <height>31</height>
@@ -356,27 +336,10 @@
         <normaloff>:/newPrefix/res/delete_FILL0_wght400_GRAD0_opsz48.svg</normaloff>:/newPrefix/res/delete_FILL0_wght400_GRAD0_opsz48.svg</iconset>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_7">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>622</y>
-        <width>31</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="main_window_res.qrc">
-        <normaloff>:/newPrefix/res/edit_FILL0_wght400_GRAD0_opsz48.svg</normaloff>:/newPrefix/res/edit_FILL0_wght400_GRAD0_opsz48.svg</iconset>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushButton_8">
       <property name="geometry">
        <rect>
-        <x>230</x>
+        <x>190</x>
         <y>622</y>
         <width>31</width>
         <height>31</height>
@@ -503,7 +466,7 @@
         <x>290</x>
         <y>40</y>
         <width>371</width>
-        <height>161</height>
+        <height>181</height>
        </rect>
       </property>
       <property name="font">
@@ -558,31 +521,13 @@
      <attribute name="title">
       <string>График</string>
      </attribute>
-     <widget class="QLabel" name="label_6">
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>15</y>
-        <width>71</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Легенда:</string>
-      </property>
-     </widget>
      <widget class="QTabWidget" name="tabWidget_2">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>461</width>
-        <height>441</height>
+        <width>681</width>
+        <height>601</height>
        </rect>
       </property>
       <property name="font">
@@ -597,59 +542,12 @@
        <attribute name="title">
         <string>Круговой</string>
        </attribute>
-       <widget class="QLabel" name="label_8">
-        <property name="geometry">
-         <rect>
-          <x>170</x>
-          <y>380</y>
-          <width>121</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>0 руб.</string>
-        </property>
-       </widget>
       </widget>
       <widget class="QWidget" name="tab_5">
        <attribute name="title">
         <string>Ст.</string>
        </attribute>
-       <widget class="QLabel" name="label_7">
-        <property name="geometry">
-         <rect>
-          <x>170</x>
-          <y>380</y>
-          <width>121</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>0 руб.</string>
-        </property>
-       </widget>
       </widget>
-     </widget>
-     <widget class="QListWidget" name="listWidget">
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>40</y>
-        <width>131</width>
-        <height>261</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(240, 240, 240);</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
      </widget>
      <widget class="Line" name="line_8">
       <property name="geometry">
@@ -950,6 +848,25 @@ border-color: rgb(0, 0, 0);</string>
    <zorder>comboBox</zorder>
    <zorder>label_9</zorder>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>946</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_xls">
+    <property name="title">
+     <string>Инструменты</string>
+    </property>
+    <addaction name="action_2"/>
+    <addaction name="separator"/>
+    <addaction name="action_Excel"/>
+   </widget>
+   <addaction name="menu_xls"/>
+  </widget>
   <action name="actionNew">
    <property name="text">
     <string>New</string>
@@ -963,6 +880,16 @@ border-color: rgb(0, 0, 0);</string>
   <action name="actionClose">
    <property name="text">
     <string>Close</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>Изменить пароль</string>
+   </property>
+  </action>
+  <action name="action_Excel">
+   <property name="text">
+    <string>Экспорт в Excel</string>
    </property>
   </action>
  </widget>

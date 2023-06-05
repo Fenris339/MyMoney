@@ -9,7 +9,10 @@ import psycopg2
 import sys
 import os
 import dotenv
-import matplotlib
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+from PyQt5 import QtWidgets
+from xlsxwriter.workbook import Workbook
 
 env_exist = os.path.exists(".env")
 if not env_exist:
@@ -110,8 +113,8 @@ def show_incomes():
     SELECT "Income_ID","Income_name","Income_amount","Income_date","Category_name", "Balance_name"
     FROM "Income"
     JOIN "Categories" ON "Income"."Category_ID" = "Categories_ID"
-    JOIN "Balance" ON "Income"."Balance_id" = "Balance_ID";
-    '''
+    JOIN "Balance" ON "Income"."Balance_id" = "Balance_ID"
+    ''' + add_interval_income
     with DB.cursor() as cursor:
         cursor.execute(select_incomes)
         all_incomes = cursor.fetchall()
@@ -127,8 +130,8 @@ def show_expenses():
     SELECT "Expenses_ID","Expenses_name","Expenses_amount","Expenses_date","Category_name","Balance_name"
     FROM "Expenses"
     JOIN "Categories" ON "Expenses"."Category_ID" = "Categories_ID"
-    JOIN "Balance" ON "Expenses"."Balance_id" = "Balance_ID";
-    '''
+    JOIN "Balance" ON "Expenses"."Balance_id" = "Balance_ID"
+    ''' + add_interval_expenses
     with DB.cursor() as cursor:
         cursor.execute(select_expenses)
         all_expenses = cursor.fetchall()
@@ -210,11 +213,11 @@ def category_info():
             print('CATEGORY_INFO ' + 'ID категории ' + str(category_id))
             print('CATEGORY_INFO ' + 'BOOL ' + str(category_bool) + ' ' + str(type(category_bool)))
             if category_bool:
-                select_category_amount = f'SELECT "Income_amount" FROM "Income" WHERE "Category_ID" = {category_id};'
-                cout_category_number = f'SELECT count("Income_ID") FROM "Income" WHERE "Category_ID" = {category_id};'
+                select_category_amount = f'SELECT "Income_amount" FROM "Income" WHERE "Category_ID" = {category_id}' + add_interval_income_add
+                cout_category_number = f'SELECT count("Income_ID") FROM "Income" WHERE "Category_ID" = {category_id}' + add_interval_income_add
             else:
-                select_category_amount = f'SELECT "Expenses_amount" FROM "Expenses" WHERE "Category_ID" = {category_id};'
-                cout_category_number = f'SELECT count("Expenses_ID") FROM "Expenses" WHERE "Category_ID" = {category_id};'
+                select_category_amount = f'SELECT "Expenses_amount" FROM "Expenses" WHERE "Category_ID" = {category_id}' + add_interval_expenses_add
+                cout_category_number = f'SELECT count("Expenses_ID") FROM "Expenses" WHERE "Category_ID" = {category_id}' + add_interval_expenses_add
             with DB.cursor() as cursor:
                 cursor.execute(cout_category_number)
                 category_number = cursor.fetchall()
@@ -469,12 +472,198 @@ def delete_expense():
     except:
         print('Ошибка при удалении расхода')
 
+add_interval_income = ';'
+add_interval_expenses = ';'
+add_interval_income_add = ';'
+add_interval_expenses_add = ';'
+
+def change_intraval():
+    global add_interval_expenses, add_interval_income, add_interval_income_add, add_interval_expenses_add
+    selected_interaval = ui.comboBox.currentText()
+    today_date = datetime.datetime.today()
+    print(selected_interaval)
+    if selected_interaval == 'Все':
+        add_interval_income = ';'
+        add_interval_expenses = ';'
+        update_tables()
+    elif selected_interaval == 'Сегодня':
+        interval_date = datetime.date.today()
+        add_interval_expenses = f'WHERE "Expenses_date" = \'{interval_date}\''
+        add_interval_income = f'WHERE "Income_date" = \'{interval_date}\''
+        add_interval_expenses_add = f' AND "Expenses_date" = \'{interval_date}\''
+        add_interval_income_add = f' AND "Income_date" = \'{interval_date}\''
+        update_tables()
+    elif selected_interaval == 'Неделя':
+        interval_date_start = today_date - datetime.timedelta(datetime.datetime.weekday(today_date))
+        interval_date_start = interval_date_start.date()
+        interval_date_now = today_date
+        interval_date_now = interval_date_now.date()
+        print(interval_date_start, " ", interval_date_now)
+        add_interval_expenses = f'WHERE "Expenses_date" >= \'{interval_date_start}\' AND "Expenses_date" <= \'{interval_date_now}\''
+        add_interval_income = f'WHERE "Income_date" >= \'{interval_date_start}\' AND "Income_date" <= \'{interval_date_now}\''
+        add_interval_expenses_add = f' AND "Expenses_date" >= \'{interval_date_start}\' AND "Expenses_date" <= \'{interval_date_now}\''
+        add_interval_income_add = f' AND "Income_date" >= \'{interval_date_start}\' AND "Income_date" <= \'{interval_date_now}\''
+        update_tables()
+    elif selected_interaval == 'Месяц':
+        interval_date_start = datetime.date(today_date.year,today_date.month,1)
+        interval_date_now = today_date
+        interval_date_now = interval_date_now.date()
+        print(interval_date_start)
+        add_interval_expenses = f'WHERE "Expenses_date" >= \'{interval_date_start}\' AND "Expenses_date" <= \'{interval_date_now}\''
+        add_interval_income = f'WHERE "Income_date" >= \'{interval_date_start}\' AND "Income_date" <= \'{interval_date_now}\''
+        add_interval_expenses_add = f' AND "Expenses_date" >= \'{interval_date_start}\' AND "Expenses_date" <= \'{interval_date_now}\''
+        add_interval_income_add = f' AND "Income_date" >= \'{interval_date_start}\' AND "Income_date" <= \'{interval_date_now}\''
+        update_tables()
+    elif selected_interaval == 'Год':
+        interval_date_start = datetime.date(today_date.year,1,1)
+        interval_date_now = today_date
+        interval_date_now = interval_date_now.date()
+        add_interval_expenses = f'WHERE "Expenses_date" >= \'{interval_date_start}\' AND "Expenses_date" <= \'{interval_date_now}\''
+        add_interval_income = f'WHERE "Income_date" >= \'{interval_date_start}\' AND "Income_date" <= \'{interval_date_now}\''
+        add_interval_expenses_add = f' AND "Expenses_date" >= \'{interval_date_start}\' AND "Expenses_date" <= \'{interval_date_now}\''
+        add_interval_income_add = f' AND "Income_date" >= \'{interval_date_start}\' AND "Income_date" <= \'{interval_date_now}\''
+        update_tables()
+
+def show_diagram():
+    global pie_figure, pie_canvas, st_figure, st_canvas
+    pie_figure = Figure()
+    st_figure = Figure()
+
+    pie_canvas = FigureCanvas(pie_figure)
+    st_canvas = FigureCanvas(st_figure)
+
+    layout_st_diagram = QtWidgets.QVBoxLayout(ui.tab_5)
+    layout_st_diagram.addWidget(st_canvas)
+    layout_pie_diagram = QtWidgets.QVBoxLayout(ui.tab_4)
+    layout_pie_diagram.addWidget(pie_canvas)
+
+    st_widget = QtWidgets.QWidget(ui.tab_5)
+    pie_widget = QtWidgets.QWidget(ui.tab_4)
+    create_pie_chart()
+    create_st_diagram()
+
+
+def create_pie_chart():
+    ax = pie_figure.add_subplot(111)
+    select_categories_income = '''SELECT "Category_name", SUM ("Income_amount") as total
+        FROM "Income"
+        JOIN "Categories" ON "Category_ID" = "Categories_ID"
+        GROUP BY "Category_ID","Category_name"'''
+    select_categories_expenses = '''SELECT "Category_name", SUM ("Expenses_amount") as total
+        FROM "Expenses"
+        JOIN "Categories" ON "Category_ID" = "Categories_ID"
+        GROUP BY "Category_ID","Category_name"'''
+    with DB.cursor() as cursor:
+        cursor.execute(select_categories_income)
+        categories_income_tuple = cursor.fetchall()
+        cursor.execute(select_categories_expenses)
+        categories_expense_tuple = cursor.fetchall()
+        DB.commit()
+        categories = []
+        values = []
+
+        combined_list = [categories_income_tuple, categories_expense_tuple]
+        categories_list = [i for sublist in combined_list for i in sublist]
+        print(categories_list)
+
+    for i in range(len(categories_list)):
+        categories.append(str(categories_list[i][0].strip("(),'\"")))
+        values.append(int(categories_list[i][1]))
+    print("-+-+-+-+-+-",categories)
+    print("-+-+-+-++-",values)
+    ax.pie(values, labels=categories, autopct='%1.1f%%')
+    pie_canvas.draw()
+
+def create_st_diagram():
+    ax = st_figure.add_subplot(111)
+    select_categories_income = '''SELECT "Category_name", SUM ("Income_amount") as total
+    FROM "Income"
+    JOIN "Categories" ON "Category_ID" = "Categories_ID"
+    GROUP BY "Category_ID","Category_name"'''
+    select_categories_expenses = '''SELECT "Category_name", SUM ("Expenses_amount") as total
+    FROM "Expenses"
+    JOIN "Categories" ON "Category_ID" = "Categories_ID"
+    GROUP BY "Category_ID","Category_name"'''
+    with DB.cursor() as cursor:
+        cursor.execute(select_categories_income)
+        categories_income_tuple = cursor.fetchall()
+        cursor.execute(select_categories_expenses)
+        categories_expense_tuple = cursor.fetchall()
+        DB.commit()
+        categories = []
+        values = []
+
+        combined_list = [categories_income_tuple, categories_expense_tuple]
+        categories_list = [i for sublist in combined_list for i in sublist]
+        print(categories_list)
+
+    for i in range(len(categories_list)):
+        categories.append(str(categories_list[i][0].strip("(),'\"")))
+        values.append(int(categories_list[i][1]))
+
+    ax.bar(categories,values)
+    st_canvas.draw()
+
+def change_password():
+    text = QtWidgets.QInputDialog()
+    text.exec()
+    if text.result():
+        with open('.env', 'w') as f:
+            f.write(f"MYMONEY_PASSWORD = {text.textValue()}")
+
+def tables_to_excel():
+    fileName, ok = QtWidgets.QFileDialog.getSaveFileName(None,
+        "Сохранить файл",
+        ".",
+        "All Files(*.xlsx)"
+    )
+    if not fileName:
+        return
+
+    _list_expense = []
+    model_expense = ui.tableWidget_2.model()
+    for row in range(model_expense.rowCount()):
+        _r = []
+        for column in range(model_expense.columnCount()):
+            _r.append("{}".format(model_expense.index(row, column).data() or ""))
+        _list_expense.append(_r)
+
+    _list_income = []
+    model_income = ui.tableWidget.model()
+    for row in range(model_income.rowCount()):
+        _r = []
+        for column in range(model_income.columnCount()):
+            _r.append("{}".format(model_income.index(row, column).data() or ""))
+        _list_income.append(_r)
+
+    workbook = Workbook(fileName)
+    worksheet = workbook.add_worksheet()
+    worksheet_1 = workbook.add_worksheet()
+
+    for r, row in enumerate(_list_income):
+        for c, col in enumerate(row):
+            worksheet.write(r, c, col)
+
+    for r, row in enumerate(_list_expense):
+        for c, col in enumerate(row):
+            worksheet_1.write(r, c, col)
+
+    workbook.close()
+    msg = QtWidgets.QMessageBox.information(None,
+        "Экспорт",
+        f"Транзакции сохранены в файле: \n{fileName}"
+    )
+
+show_diagram()
 get_all_balance()
 show_balances()
 show_incomes()
 show_expenses()
 show_categories()
 
+ui.action_2.triggered.connect(change_password)
+ui.action_Excel.triggered.connect(tables_to_excel)
+ui.comboBox.currentTextChanged.connect(change_intraval)
 ui.pushButton_10.clicked.connect(listwidget_balance_delete)
 ui.pushButton_9.clicked.connect(listwidget_categories_delete)
 ui.pushButton.clicked.connect(new_balance_window)
